@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>DC examples</title>
+    <link rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossorigin="anonymous">
+    <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/prismjs@1.17.1/themes/prism-okaidia.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.17.1/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.17.1/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@deleteagency/live-highlight@0.0.1/build/live-highlight.min.js"></script>
+
+    <script src="build/dc.min.js"></script>
+</head>
+
+<script>
+    LiveHighlight.bootstrap((element, type) => {
+        function getLanguage(type) {
+            switch (type) {
+                case LiveHighlight.TYPE_JAVASCRIPT:
+                    return 'js';
+                case LiveHighlight.TYPE_STYLES:
+                    return 'css';
+                case LiveHighlight.TYPE_HTML:
+                    return 'markup';
+            }
+        }
+
+        element.className = `lang-${getLanguage(type)}`;
+        Prism.highlightElement(element);
+    });
+</script>
+<body>
+<div class="py-4">
+    <div class="container">
+        <h1>Examples</h1>
+
+        <div class="mb-5">
+            <h2>Simple example</h2>
+            <p>
+                To enable your component's logic on some DOM element you should add to it
+                <b>data-dc-component</b> attribute with value of the Namespace that you previously specified in "define" method.
+            </p>
+
+            <div data-live-highlight-target="simple"></div>
+
+            <div data-live-highlight="simple" data-dc-component-collapsed
+                    data-dc-collapsed-options='{"speed": 500, "ease": "linear"}' class="collapsed">
+                <button class="collapsed__button" data-dc-collapsed-ref="button">
+                    Toggle
+                </button>
+                <div class="collapsed__content" data-dc-collapsed-ref="content">
+                    Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.
+                </div>
+            </div>
+
+            <script data-live-highlight="simple">
+                class CollapsedComponent extends DcBaseComponent {
+                    constructor(...args) {
+                        super(...args);
+
+                        this.button = this.refs.button;
+                        this.content = this.refs.content;
+                    }
+
+                    onInit() {
+                        console.log('CollapsedComponent was instantiate on the element', this.element)
+                    }
+
+                    static getNamespace() {
+                        return 'collapsed'
+                    }
+                }
+            </script>
+
+            <script>
+                dcFactory.register(CollapsedComponent);
+                dcFactory.init();
+            </script>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
