@@ -152,7 +152,7 @@ class DcFactory {
     _initComponentOnElement(element, componentClass) {
         if (!this._isComponentCreatedOnElement(element, componentClass)) {
             this._setComponentStateOnElement(element, componentClass, COMPONENT_STATE_INITIALIZING);
-            // todo consider more sophisticated optimization technique
+            // TODO consider more sophisticated optimization technique
             setTimeout(() => {
                 try {
                     const instance = this._createComponentOnElement(componentClass, element);
@@ -229,6 +229,15 @@ class DcFactory {
     _destroyComponent(component) {
         this._setComponentStateOnElement(component.getElement(), component.constructor, COMPONENT_STATE_DESTROYED);
         component.destroy();
+    }
+
+    /**
+     * Returns all existing Just for debugging purpose!
+     * @param {HTMLElement} element
+     * @private
+     */
+    getElementComponents(element) {
+        return this._instances.filter((instance) => instance.getElement() === element);
     }
 }
 

@@ -35,27 +35,58 @@
         Prism.highlightElement(element);
     });
 </script>
+<style>
+    .example {
+        position: relative;
+        padding: 1rem;
+        margin: 1rem -15px 0;
+        border: solid #f8f9fa;
+        border-width: .2rem 0 0
+    }
+
+    @media (min-width: 576px) {
+        .example {
+            padding:1.5rem;
+            margin-right: 0;
+            margin-left: 0;
+            border-width: .2rem
+        }
+    }
+</style>
 <body>
 <div class="py-4">
     <div class="container">
-        <h1>Examples</h1>
+        <h1>DC Examples</h1>
 
         <div class="mb-5">
             <h2>Simple example</h2>
             <p>
-                To enable your component's logic on some DOM element you should add to it
-                <b>data-dc-component</b> attribute with value of the Namespace that you previously specified in "define" method.
+                To enable your component's logic on some DOM element you can either
             </p>
+            <ul>
+                <li>
+                    Add <b>data-dc-component-${namespace}</b> attribute to the element,
+                    when "namespace" is the value of the getNamespace() static method of the component class.
+                </li>
+                <li>
+                    If you can't or don't want to use default searching strategy
+                    pass second argument of the dcFactory.register to set css selector which will be used for searching elements
+                </li>
+            </ul>
+
 
             <div data-live-highlight-target="simple"></div>
 
-            <div data-live-highlight="simple" data-dc-component-collapsed
-                    data-dc-collapsed-options='{"speed": 500, "ease": "linear"}' class="collapsed">
-                <button class="collapsed__button" data-dc-collapsed-ref="button">
-                    Toggle
-                </button>
-                <div class="collapsed__content" data-dc-collapsed-ref="content">
-                    Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.
+            <div class="example mb-5">
+                <div class="collapsed" id="simple-collapsed" data-live-highlight="simple"
+                        data-dc-component-collapsed
+                        data-dc-collapsed-options='{"speed": 500, "ease": "linear"}'>
+                    <button class="collapsed__button" data-dc-collapsed-ref="button">
+                        Toggle
+                    </button>
+                    <div class="collapse card card-body" data-dc-collapsed-ref="content">
+                        Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.
+                    </div>
                 </div>
             </div>
 
@@ -64,21 +95,37 @@
                     constructor(...args) {
                         super(...args);
 
-                        this.button = this.refs.button;
-                        this.content = this.refs.content;
-                    }
-
-                    onInit() {
-                        console.log('CollapsedComponent was instantiate on the element', this.element)
+                        this.onClick = this.onClick.bind(this);
                     }
 
                     static getNamespace() {
                         return 'collapsed'
                     }
+
+                    onInit() {
+                        console.log('CollapsedComponent was instantiate on the element', this.element);
+                        console.log('Options', this.options);
+                        console.log('Refs', this.refs);
+
+                        this.refs.button.addEventListener('click', this.onClick);
+                    }
+
+                    onClick() {
+                        if (this.refs.content.classList.contains('show')) {
+                            this.refs.content.classList.remove('show');
+                        } else {
+                            this.refs.content.classList.add('show');
+                        }
+                    }
                 }
             </script>
 
-            <script>
+            <p>
+                Call dcFactory.register with your components, and then starts the factory by calling
+                dcFactory.init()
+            </p>
+
+            <script data-live-highlight>
                 dcFactory.register(CollapsedComponent);
                 dcFactory.init();
             </script>

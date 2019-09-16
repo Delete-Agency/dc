@@ -7,7 +7,7 @@
  * @param {string} name
  * @param value
  */
-// todo remove similar method from object helper same name
+// todo remove similar method from object helper with the same name
 function addToAssociativeCollection(collection, name, value) {
     const arrayRegexp = /(.+)\[(.*)\]/;
     const arrayParseResult = name.match(arrayRegexp);
