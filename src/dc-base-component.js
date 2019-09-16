@@ -55,7 +55,7 @@ export default class DcBaseComponent {
     }
 
     /**
-     * todo
+     * TODO
      * @return {string}
      */
     static getNamespace() {
