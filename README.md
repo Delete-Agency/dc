@@ -40,8 +40,12 @@ export default class CollapsedComponent extends DcBaseComponent {
 // collapsed/index.js
 import './scss/index.scss';
 import {dcFactory} from  '@deleteagency/dc';
-import CollapsedComponent from  './collapsed.js';
+import CollapsedComponent from './collapsed.js';
 dcFactory.register(CollapsedComponent);
+
+
+// later after registering all your components, when your page is ready
+dcFactory.init();
 
 ```
 
