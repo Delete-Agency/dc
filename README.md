@@ -56,7 +56,7 @@ dcFactory.init();
 #### componentClass
 
 *Required*<br>
-Type: `Function`
+Type: `typeof DcBaseComponent`
 
 Class which inherits DcBaseComponent and will be instantiated
 
@@ -85,7 +85,37 @@ Destroy all previously registered components within the passed element
 *Required*<br>
 Type: `HTMLElement`
 
-### dcFactory.getElementComponents(element)
+### dcFactory.getChildComponents(element, componentClass)
+
+Returns ` DcBaseComponent`.
+
+Returns all components of componentClass which are contained within the passed element
+
+#### element
+
+*Required*<br>
+Type: `HTMLElement`
+
+#### componentClass
+
+*Required*<br>
+Type: `typeof DcBaseComponent`
+
+### dcFactory.getChildComponent(element, componentClass)
+
+Returns first found component of componentClass which is contained within the passed element
+
+#### element
+
+*Required*<br>
+Type: `HTMLElement`
+
+#### componentClass
+
+*Required*<br>
+Type: `typeof DcBaseComponent`
+
+### dcFactory.debug(element)
 
 NOTE: just for debugging purpose!
 Returns all components instances which were created on the given element.

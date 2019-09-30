@@ -107,7 +107,7 @@ class DcFactory {
     }
 
     /**
-     *
+     * Starts the factory on a given root: finds and creates all registered components within the root
      * @param {HTMLElement} root
      */
     init(root = document.body) {
@@ -232,20 +232,20 @@ class DcFactory {
     }
 
     /**
-     * Returns all components of componentClass which are contained within passed element
+     * Returns all components of componentClass which are contained within the passed element
      * @param {HTMLElement} element
      * @param {typeof DcBaseComponent} componentClass
-     * @private
+     * @return DcBaseComponent[]
      */
     getChildComponents(element, componentClass) {
         return this._instances.filter((instance) => element.contains(instance.getElement()) && instance instanceof componentClass);
     }
 
     /**
-     * Returns first found component of componentClass which is contained within passed element
+     * Returns first found component of componentClass which is contained within the passed element
      * @param {HTMLElement} element
      * @param {typeof DcBaseComponent} componentClass
-     * @private
+     * @return DcBaseComponent
      */
     getChildComponent(element, componentClass) {
         return this.getChildComponents(element, componentClass)[0];
@@ -254,7 +254,7 @@ class DcFactory {
     /**
      * Returns all existing components on the passed element. Just for debugging purpose!
      * @param {HTMLElement} element
-     * @private
+     * @return DcBaseComponent[]
      */
     debug(element) {
         return this._instances.filter((instance) => instance.getElement() === element);
