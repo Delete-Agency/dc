@@ -87,7 +87,7 @@ Type: `HTMLElement`
 
 ### dcFactory.getChildComponents(element, componentClass)
 
-Returns ` DcBaseComponent`.
+Returns `DcBaseComponent[]`
 
 Returns all components of componentClass which are contained within the passed element
 
@@ -103,6 +103,8 @@ Type: `typeof DcBaseComponent`
 
 ### dcFactory.getChildComponent(element, componentClass)
 
+Returns `DcBaseComponent`
+
 Returns first found component of componentClass which is contained within the passed element
 
 #### element
@@ -116,6 +118,8 @@ Type: `HTMLElement`
 Type: `typeof DcBaseComponent`
 
 ### dcFactory.debug(element)
+
+Returns `DcBaseComponent[]`
 
 NOTE: just for debugging purpose!
 Returns all components instances which were created on the given element.
