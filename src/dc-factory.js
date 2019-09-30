@@ -232,11 +232,31 @@ class DcFactory {
     }
 
     /**
-     * Returns all existing Just for debugging purpose!
+     * Returns all components of componentClass which are contained within passed element
+     * @param {HTMLElement} element
+     * @param {typeof DcBaseComponent} componentClass
+     * @private
+     */
+    getChildComponents(element, componentClass) {
+        return this._instances.filter((instance) => element.contains(instance.getElement()) && instance instanceof componentClass);
+    }
+
+    /**
+     * Returns first found component of componentClass which is contained within passed element
+     * @param {HTMLElement} element
+     * @param {typeof DcBaseComponent} componentClass
+     * @private
+     */
+    getChildComponent(element, componentClass) {
+        return this.getChildComponents(element, componentClass)[0];
+    }
+
+    /**
+     * Returns all existing components on the passed element. Just for debugging purpose!
      * @param {HTMLElement} element
      * @private
      */
-    getElementComponents(element) {
+    debug(element) {
         return this._instances.filter((instance) => instance.getElement() === element);
     }
 }
