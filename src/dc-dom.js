@@ -1,11 +1,12 @@
 import utils from './utils';
 
-const DC_ATTRIBUTE_COMPONENT = 'data-dc-component';
-
 const DC_NAMESPACE = 'data-dc';
-const DC_NAMESPACED_ATTRIBUTE_OPTIONS = 'options';
 const DC_NAMESPACED_ATTRIBUTE_REFERENCE = 'ref';
 const DC_NAMESPACED_ATTRIBUTE_ID = 'id';
+
+function getNamespacedAnchorAttribute(namespace) {
+    return `${DC_NAMESPACE}-${namespace}`
+}
 
 /**
  * @param {HTMLElement} root
@@ -17,7 +18,7 @@ const DC_NAMESPACED_ATTRIBUTE_ID = 'id';
 function findElementsForInit(root, namespace, selector = null) {
     // by default we use namespace
     if (selector === null) {
-        selector = `[${DC_ATTRIBUTE_COMPONENT}-${namespace}]`;
+        selector = `[${getNamespacedAnchorAttribute(namespace)}]`;
     }
 
     let elements = [];
@@ -63,7 +64,7 @@ function scopedQuerySelectorAll(element, selector, namespace, id) {
  * @return {Object}
  */
 function getElementOptions(element, namespace) {
-    return getElementAttributeAsObject(element, getNamespacedAttributeName(DC_NAMESPACED_ATTRIBUTE_OPTIONS, namespace)) || {};
+    return getElementAttributeAsObject(element, getNamespacedAnchorAttribute(namespace));
 }
 
 /**
@@ -72,7 +73,7 @@ function getElementOptions(element, namespace) {
  * @return {?Object}
  */
 function getElementAttributeAsObject(element, attribute) {
-    let result = null;
+    let result = {};
     const attributeValue = element.getAttribute(attribute);
     if (attributeValue) {
         try {
