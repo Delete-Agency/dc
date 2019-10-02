@@ -5,7 +5,7 @@ const DC_NAMESPACED_ATTRIBUTE_REFERENCE = 'ref';
 const DC_NAMESPACED_ATTRIBUTE_ID = 'id';
 
 function getNamespacedAnchorAttribute(namespace) {
-    return `${DC_NAMESPACE}-${namespace}`
+    return `${DC_NAMESPACE}-${namespace}`;
 }
 
 /**
@@ -27,7 +27,7 @@ function findElementsForInit(root, namespace, selector = null) {
     } else if (typeof selector === 'function') {
         elements = selector(root);
     } else {
-        throw new Error('Unknown selector\'s type');
+        throw new Error("Unknown selector's type");
     }
 
     return elements;
@@ -79,7 +79,7 @@ function getElementAttributeAsObject(element, attribute) {
         try {
             result = JSON.parse(attributeValue);
         } catch (error) {
-            console.error(`Unable to parse «${attribute}» attribute on element:`, this.element);
+            console.error(`Unable to parse «${attribute}» attribute on element:`, element);
             throw error;
         }
     }
@@ -100,14 +100,10 @@ function getElementRefs(element, namespace, id) {
     const refs = {};
     const elements = scopedQuerySelectorAll(element, selector, namespace, id);
     if (elements.length > 0) {
-        elements.forEach((element) => {
+        elements.forEach(element => {
             const refValue = element.getAttribute(refAttribute);
             if (refValue !== null) {
-                utils.addToAssociativeCollection(
-                    refs,
-                    utils.getCamelCaseString(refValue),
-                    element
-                );
+                utils.addToAssociativeCollection(refs, utils.getCamelCaseString(refValue), element);
             }
         });
     }
