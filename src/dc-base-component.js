@@ -107,7 +107,7 @@ export default class DcBaseComponent {
 
     onInit() {
         // todo to define is onInit required on optional
-        throw new Error();
+        throw new Error('Please define onInit method');
     }
 
     addListener(elem, eventName, eventCallback) {
