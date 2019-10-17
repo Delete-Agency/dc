@@ -67,7 +67,7 @@ Type: `string`
 
 CSS selector which will override searching by getNamespace() and be used for searching elements of given componentClass. 
 
-### dcFactory.init([root = document.body])
+### dcFactory.init(root = document.body, withLazy = true)
 
 Starts the factory on a given root: finds and creates all registered components within the root
 
@@ -75,6 +75,14 @@ Starts the factory on a given root: finds and creates all registered components 
 
 *Optional*<br>
 Type: `HTMLElement`
+
+#### withLazy
+
+*Optional*<br>
+Type: `boolean`
+
+Defines whether or not components which are marked as lazy should be created during this particular initialization.
+To mark components as lazy you need to add `data-dc-lazy` attribute on its element or any of its parent elements
 
 ### dcFactory.destroy(root)
 

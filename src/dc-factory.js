@@ -15,6 +15,10 @@ const COMPONENT_STATE_INITIALIZING = 'initializing';
 /**
  * @type {ComponentState}
  */
+const COMPONENT_STATE_LAZY_WAITING = 'lazy-waiting';
+/**
+ * @type {ComponentState}
+ */
 const COMPONENT_STATE_CREATED = 'created';
 /**
  * @type {ComponentState}
@@ -65,22 +69,6 @@ class DcFactory {
      *
      * @param {HTMLElement} element
      * @param {typeof DcBaseComponent} componentClass
-     * @return boolean
-     * @private
-     */
-    _isComponentCreatedOnElement(element, componentClass) {
-        const existedComponents = this._elementsComponents.get(element);
-        if (existedComponents) {
-            const state = existedComponents.get(componentClass);
-            return [COMPONENT_STATE_CREATED, COMPONENT_STATE_INITIALIZING].includes(state);
-        }
-        return false;
-    }
-
-    /**
-     *
-     * @param {HTMLElement} element
-     * @param {typeof DcBaseComponent} componentClass
      * @return ComponentState
      * @private
      */
@@ -109,10 +97,11 @@ class DcFactory {
     /**
      * Starts the factory on a given root: finds and creates all registered components within the root
      * @param {HTMLElement} root
+     * @param {boolean} withLazy - Whether or not initialize component which marked as lazy
      */
-    init(root = document.body) {
+    init(root = document.body, withLazy = true) {
         this._registredComponents.forEach(({ componentClass, selector }) => {
-            this._initComponent(root, componentClass, selector);
+            this._initComponent(root, componentClass, selector, withLazy);
         });
 
         if (process.env.NODE_ENV === 'development') {
@@ -127,14 +116,15 @@ class DcFactory {
      * @param {HTMLElement} root
      * @param {typeof DcBaseComponent} componentClass
      * @param {Function|string} selector
+     * @param {boolean} withLazy
      * @private
      */
-    _initComponent(root, componentClass, selector) {
+    _initComponent(root, componentClass, selector, withLazy) {
         try {
             const elements = dcDom.findElementsForInit(root, componentClass.getNamespace(), selector);
             if (elements.length > 0) {
                 elements.forEach((element) => {
-                    this._initComponentOnElement(element, componentClass);
+                    this._initComponentOnElement(element, componentClass, withLazy);
                 });
             }
         } catch (e) {
@@ -143,25 +133,49 @@ class DcFactory {
         }
     }
 
+    _isComponentLazy(element) {
+        return dcDom.isElementWithinLazyParent(element);
+    }
+
     /**
      * Init component class on elements
      * @param {HTMLElement} element
      * @param {typeof DcBaseComponent} componentClass
+     * @param {boolean} withLazy
      * @private
      */
-    _initComponentOnElement(element, componentClass) {
-        if (!this._isComponentCreatedOnElement(element, componentClass)) {
-            this._setComponentStateOnElement(element, componentClass, COMPONENT_STATE_INITIALIZING);
-            // TODO consider more sophisticated optimization technique
-            setTimeout(() => {
-                try {
-                    const instance = this._createComponentOnElement(componentClass, element);
-                    this._onComponentCreated(instance, componentClass);
-                } catch (error) {
-                    this._onComponentCreationError(error, element, componentClass);
+    _initComponentOnElement(element, componentClass, withLazy) {
+        const state = this._getComponentStateOnElement(element, componentClass);
+        switch (state) {
+            // ignore components which are already created or in the middle of that process
+            case COMPONENT_STATE_CREATED:
+            case COMPONENT_STATE_ERROR:
+            case COMPONENT_STATE_INITIALIZING:
+                return;
+            case COMPONENT_STATE_LAZY_WAITING:
+                if (!withLazy) {
+                    return;
                 }
-            }, 0);
         }
+
+        // if component is lazy but we should not instantiate it according withLazy = false
+        // we need to mark this component and wait until withLazy = true
+        if (!withLazy && this._isComponentLazy(element)) {
+            this._setComponentStateOnElement(element, componentClass, COMPONENT_STATE_LAZY_WAITING);
+            return;
+        }
+
+        // finally init component on element
+        this._setComponentStateOnElement(element, componentClass, COMPONENT_STATE_INITIALIZING);
+        // TODO consider more sophisticated optimization technique
+        setTimeout(() => {
+            try {
+                const instance = this._createComponentOnElement(componentClass, element);
+                this._onComponentCreated(instance, componentClass);
+            } catch (error) {
+                this._onComponentCreationError(error, element, componentClass);
+            }
+        }, 0);
     }
 
     /**

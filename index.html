@@ -40,13 +40,13 @@
         position: relative;
         padding: 1rem;
         margin: 1rem -15px 0;
-        border: solid #f8f9fa;
+        border: solid #F8F9FA;
         border-width: .2rem 0 0
     }
 
     @media (min-width: 576px) {
         .example {
-            padding:1.5rem;
+            padding: 1.5rem;
             margin-right: 0;
             margin-left: 0;
             border-width: .2rem
@@ -130,6 +130,74 @@
             </script>
         </div>
 
+        <div class="mb-5">
+            <h2>Lazy initialization</h2>
+            <p>
+                You can defer your components initialization by marking its element or any of its parents with
+                <b>data-dc-lazy</b> attribute.
+                Passing an additional argument withLazy equals false to dcFactory.init(element, withLazy = true) you can manage whether or not components which are marked as lazy should be created.
+                It can be useful when some component(s) require specific action to become visible and interactive. (For example if you want to initialize components within the modal only when it is opened)
+                After those action have happened you can call dcComponent(element, true) and all component within the element will be created despite the data-dc-lazy attribute
+            </p>
+            <p>
+                Example below shows that one of the message components won't be created until the button is clicked
+            </p>
+
+            <div data-live-highlight-target="lazy"></div>
+
+            <div class="mb-5">
+
+                <style>
+                    .message {
+                        padding: 20px;
+                        background-color: lightgray;
+                    }
+
+                    .is-hidden {
+                        display: none;
+                    }
+                </style>
+
+                <div data-live-highlight="lazy">
+                    <div class="message" data-dc-message='{"message": "I am created at once"}'>
+                    </div>
+
+                    <button id="lazy-trigger-button"
+                            class="btn btn-primary mt-2 mb-2">Create lazy components
+                    </button>
+
+                    <div id="lazy-target" data-dc-lazy class="is-hidden">
+                        <div class="message "
+                                data-dc-message='{"message": "I am created once button is clicked"}'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script data-live-highlight="lazy">
+                class MessageComponent extends DcBaseComponent {
+                    static getNamespace() {
+                        return 'message'
+                    }
+
+                    onInit() {
+                        console.log('MessageComponent is created on node', this.element);
+                        this.element.innerText = this.options.message;
+                    }
+                }
+
+                dcFactory.register(MessageComponent);
+                dcFactory.init(document.body, false);
+
+                const lazyTriggerButton = document.getElementById('lazy-trigger-button');
+                const lazyTarget = document.getElementById('lazy-target');
+                lazyTriggerButton.addEventListener('click', () => {
+                    lazyTarget.classList.remove('is-hidden');
+                    dcFactory.init(lazyTarget, true);
+                })
+            </script>
+
+        </div>
     </div>
 </div>
 </body>

@@ -3,6 +3,7 @@ import utils from './utils';
 const DC_NAMESPACE = 'data-dc';
 const DC_NAMESPACED_ATTRIBUTE_REFERENCE = 'ref';
 const DC_NAMESPACED_ATTRIBUTE_ID = 'id';
+const DC_NAMESPACED_ATTRIBUTE_LAZY = 'lazy';
 
 function getNamespacedAnchorAttribute(namespace) {
     return `${DC_NAMESPACE}-${namespace}`;
@@ -31,6 +32,23 @@ function findElementsForInit(root, namespace, selector = null) {
     }
 
     return elements;
+}
+
+/**
+ * @param {HTMLElement} element
+ * @return {boolean}
+ */
+function isElementWithinLazyParent(element) {
+    let checkElement = element;
+    const attribute = `${DC_NAMESPACE}-${DC_NAMESPACED_ATTRIBUTE_LAZY}`;
+    while (checkElement) {
+        if (checkElement.hasAttribute(attribute)) {
+            return true;
+        }
+        checkElement = checkElement.parentElement;
+    }
+
+    return false;
 }
 
 /**
@@ -134,5 +152,6 @@ export default {
     getElementRefs,
     getParentId,
     getNamespacedAttributeValue,
-    findChildrenWithAttribute
+    findChildrenWithAttribute,
+    isElementWithinLazyParent
 };
