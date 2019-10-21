@@ -5,6 +5,11 @@ const DC_NAMESPACED_ATTRIBUTE_REFERENCE = 'ref';
 const DC_NAMESPACED_ATTRIBUTE_ID = 'id';
 const DC_NAMESPACED_ATTRIBUTE_LAZY = 'lazy';
 
+function matches(root, selector) {
+    // add support of the matches in IE
+    return root.matches ? root.matches(selector) : root.msMatchesSelector(selector);
+}
+
 function getNamespacedAnchorAttribute(namespace) {
     return `${DC_NAMESPACE}-${namespace}`;
 }
@@ -25,6 +30,9 @@ function findElementsForInit(root, namespace, selector = null) {
     let elements = [];
     if (typeof selector === 'string') {
         elements = [...root.querySelectorAll(selector)];
+        if (matches(root, selector)) {
+            elements.push(root);
+        }
     } else if (typeof selector === 'function') {
         elements = selector(root);
     } else {
