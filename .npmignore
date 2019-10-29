@@ -1,5 +1,8 @@
 .idea
+coverage/
 examples/
 node_modules/
+tests/
+demo/
 index.html
-webpack.*.js
+*.config.js

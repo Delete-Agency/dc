@@ -2,36 +2,39 @@
   "name": "@deleteagency/dc",
   "version": "1.1.1",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/Delete-Agency/dc.git"
   },
   "homepage": "https://github.com/Delete-Agency/dc",
   "scripts": {
-    "build": "webpack",
-    "watch": "webpack --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src -d lib",
+    "standalone": "webpack --config webpack.standalone.config.js",
+    "demo": "webpack --config webpack.demo.config.js",
+    "demo:watch": "webpack --config webpack.demo.config.js --watch",
+    "test": "echo \"No test specified\"",
+    "prepublish": "npm run build && npm run standalone"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@babel/cli": "^7.6.4",
     "@babel/core": "^7.5.5",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/plugin-transform-object-assign": "^7.2.0",
     "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
-    "webpack": "^4.37.0",
+    "core-js": "^3.3.5",
+    "webpack": "^4.41.2",
     "webpack-cli": "^3.3.6"
   },
   "browserslist": [
-    "ios >= 11",
-    "android >= 9",
-    "chromeAndroid >= 45",
+    "ie 11",
+    "last 2 firefox versions",
     "last 2 edge versions",
     "last 2 chrome versions",
-    "last 1 safari versions",
-    "firefox >= 26"
+    "last 2 safari versions",
+    "last 2 and_chr versions",
+    "last 2 ios_saf versions"
   ]
 }
