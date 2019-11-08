@@ -2,39 +2,32 @@
   "name": "@deleteagency/dc",
   "version": "2.0.0-0",
   "description": "",
-  "main": "lib/index.js",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "standalone"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/Delete-Agency/dc.git"
   },
   "homepage": "https://github.com/Delete-Agency/dc",
   "scripts": {
-    "build": "babel src -d lib",
     "standalone": "webpack --config webpack.standalone.config.js",
     "demo": "webpack --config webpack.demo.config.js",
     "demo:watch": "webpack --config webpack.demo.config.js --watch",
     "test": "echo \"No test specified\"",
-    "prepublish": "npm run build && npm run standalone"
+    "prepublish": "npm run standalone"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
-    "core-js": "^3.3.5",
+    "core-js": "^2.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.6"
-  },
-  "browserslist": [
-    "ie 11",
-    "last 2 firefox versions",
-    "last 2 edge versions",
-    "last 2 chrome versions",
-    "last 2 safari versions",
-    "last 2 and_chr versions",
-    "last 2 ios_saf versions"
-  ]
+  }
 }
