@@ -5,12 +5,49 @@ import utils from './utils';
  * @typedef {Object.<string, {(HTMLElement|HTMLElement[]|Object.<string, HTMLElement>)}>} ReferencesCollection
  */
 
+/**
+ * Interface for classes that can be initialized by factory.
+ * @interface Initializable
+*/
+/**
+ * Init Initializable
+ * @method
+ * @name Initializable#init
+ *
+ */
+/**
+ * Destroy Initializable
+ * @method
+ * @name Initializable#destroy
+ *
+ */
+/**
+ * @method
+ * @name Initializable#getElement
+ * @return {HTMLElement} element
+ */
+/**
+ * @method
+ * @name Initializable#getNamespace
+ * @static
+ */
+
+/**
+ * Base component.
+ * @class
+ * @implements {Initializable}
+ */
 export default class DcBaseComponent {
     /**
      * @param {HTMLElement} element
      */
     constructor(element) {
-        utils.checkForbiddenOverrides(DcBaseComponent, this, ['getElement', 'getNamespace', 'init', 'addListener']);
+        utils.checkForbiddenOverrides(DcBaseComponent, this, [
+            'getElement',
+            'getNamespace',
+            'init',
+            'addListener'
+        ]);
 
         /**
          * Root element of the component
@@ -49,7 +86,11 @@ export default class DcBaseComponent {
         /**
          * @type {ReferencesCollection}
          */
-        this.refs = dcDom.getElementRefs(element, this.getNamespace(), this._id);
+        this.refs = dcDom.getElementRefs(
+            element,
+            this.getNamespace(),
+            this._id
+        );
 
         this._checkRequiredRefs(this.refs);
     }
@@ -94,9 +135,11 @@ export default class DcBaseComponent {
      * @private
      */
     _checkRequiredRefs(refs) {
-        this.constructor.getRequiredRefs().forEach((name) => {
+        this.constructor.getRequiredRefs().forEach(name => {
             if (!refs[name]) {
-                throw new Error(`the value of required ref ${name} is ${refs[name]}`);
+                throw new Error(
+                    `the value of required ref ${name} is ${refs[name]}`
+                );
             }
         });
     }
@@ -122,7 +165,7 @@ export default class DcBaseComponent {
     }
 
     _removeAllListeners() {
-        this._listenersList.forEach((listener) => {
+        this._listenersList.forEach(listener => {
             const { elem, eventName, eventCallback } = listener;
             elem.removeEventListener(eventName, eventCallback);
         });
@@ -139,19 +182,27 @@ export default class DcBaseComponent {
         this.onDestroy();
     }
 
-    onDestroy() {
-    }
+    onDestroy() {}
 
     getChildAttribute(childNode, attributeName) {
         const childId = dcDom.getParentId(childNode, this.getNamespace());
         if (this._id !== childId) {
-            throw new Error('id attributes of child and parent don\'t match');
+            throw new Error("id attributes of child and parent don't match");
         }
 
-        return dcDom.getNamespacedAttributeValue(childNode, attributeName, this.getNamespace());
+        return dcDom.getNamespacedAttributeValue(
+            childNode,
+            attributeName,
+            this.getNamespace()
+        );
     }
 
     findChildrenWithAttribute(attributeName) {
-        return dcDom.findChildrenWithAttribute(this.element, attributeName, this.getNamespace(), this._id);
+        return dcDom.findChildrenWithAttribute(
+            this.element,
+            attributeName,
+            this.getNamespace(),
+            this._id
+        );
     }
 }

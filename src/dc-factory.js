@@ -33,21 +33,21 @@ class DcFactory {
     constructor() {
         /**
          *
-         * @type {{componentClass: typeof DcBaseComponent, selector: string}[]}
+         * @type {{componentClass: typeof Initializable, selector: string}[]}
          * @private
          */
         this._registredComponents = [];
 
         /**
          *
-         * @type {WeakMap<HTMLElement, Map<typeof DcBaseComponent, ComponentState>>}
+         * @type {WeakMap<HTMLElement, Map<typeof Initializable, ComponentState>>}
          * @private
          */
         this._elementsComponents = new WeakMap();
 
         /**
          *
-         * @type {DcBaseComponent[]}
+         * @type {Initializable[]}
          * @private
          */
         this._instances = [];
@@ -55,7 +55,7 @@ class DcFactory {
 
     /**
      *
-     * @param {typeof DcBaseComponent} componentClass
+     * @param {typeof Initializable} componentClass
      * @param {Function|string} selector that indicates how we should search that component elements
      */
     register(componentClass, selector = null) {
@@ -68,7 +68,7 @@ class DcFactory {
     /**
      *
      * @param {HTMLElement} element
-     * @param {typeof DcBaseComponent} componentClass
+     * @param {typeof Initializable} componentClass
      * @return ComponentState
      * @private
      */
@@ -80,7 +80,7 @@ class DcFactory {
     /**
      *
      * @param {HTMLElement} element
-     * @param {typeof DcBaseComponent} componentClass
+     * @param {typeof Initializable} componentClass
      * @param {ComponentState} state
      * @private
      */
@@ -114,7 +114,7 @@ class DcFactory {
     /**
      *
      * @param {HTMLElement} root
-     * @param {typeof DcBaseComponent} componentClass
+     * @param {typeof Initializable} componentClass
      * @param {Function|string} selector
      * @param {boolean} withLazy
      * @private
@@ -140,7 +140,7 @@ class DcFactory {
     /**
      * Init component class on elements
      * @param {HTMLElement} element
-     * @param {typeof DcBaseComponent} componentClass
+     * @param {typeof Initializable} componentClass
      * @param {boolean} withLazy
      * @private
      */
@@ -179,8 +179,8 @@ class DcFactory {
     }
 
     /**
-     * @param {DcBaseComponent} instance
-     * @param {typeof DcBaseComponent} componentClass
+     * @param {Initializable} instance
+     * @param {typeof Initializable} componentClass
      * @private
      */
     _onComponentCreated(instance, componentClass) {
@@ -193,7 +193,7 @@ class DcFactory {
     /**
      * @param {Error} error
      * @param {HTMLElement} element
-     * @param {typeof DcBaseComponent} componentClass
+     * @param {typeof Initializable} componentClass
      * @private
      */
     _onComponentCreationError(error, element, componentClass) {
@@ -204,9 +204,9 @@ class DcFactory {
 
     /**
      *
-     * @param {typeof DcBaseComponent} componentClass
+     * @param {typeof Initializable} componentClass
      * @param {HTMLElement} element
-     * @return {DcBaseComponent}
+     * @return {Initializable}
      * @private
      */
     _createComponentOnElement(componentClass, element) {
@@ -237,7 +237,7 @@ class DcFactory {
 
     /**
      *
-     * @param {DcBaseComponent} component
+     * @param {Initializable} component
      * @private
      */
     _destroyComponent(component) {
@@ -248,8 +248,8 @@ class DcFactory {
     /**
      * Returns all components of componentClass which are contained within the passed element
      * @param {HTMLElement} element
-     * @param {typeof DcBaseComponent} componentClass
-     * @return DcBaseComponent[]
+     * @param {typeof Initializable} componentClass
+     * @return Initializable[]
      */
     getChildComponents(element, componentClass) {
         return this._instances.filter((instance) => element.contains(instance.getElement()) && instance instanceof componentClass);
@@ -258,8 +258,8 @@ class DcFactory {
     /**
      * Returns first found component of componentClass which is contained within the passed element
      * @param {HTMLElement} element
-     * @param {typeof DcBaseComponent} componentClass
-     * @return DcBaseComponent
+     * @param {typeof Initializable} componentClass
+     * @return Initializable
      */
     getChildComponent(element, componentClass) {
         return this.getChildComponents(element, componentClass)[0];
@@ -268,7 +268,7 @@ class DcFactory {
     /**
      * Returns all existing components on the passed element. Just for debugging purpose!
      * @param {HTMLElement} element
-     * @return DcBaseComponent[]
+     * @return Initializable[]
      */
     debug(element) {
         return this._instances.filter((instance) => instance.getElement() === element);
