@@ -7,35 +7,35 @@ import utils from './utils';
 
 /**
  * Interface for classes that can be initialized by factory.
- * @interface Initializable
+ * @interface Component
 */
 /**
- * Init Initializable
+ * Init Component
  * @method
- * @name Initializable#init
+ * @name Component#init
  *
  */
 /**
- * Destroy Initializable
+ * Destroy Component
  * @method
- * @name Initializable#destroy
+ * @name Component#destroy
  *
  */
 /**
  * @method
- * @name Initializable#getElement
+ * @name Component#getElement
  * @return {HTMLElement} element
  */
 /**
  * @method
- * @name Initializable#getNamespace
+ * @name Component#getNamespace
  * @static
  */
 
 /**
  * Base component.
  * @class
- * @implements {Initializable}
+ * @implements {Component}
  */
 export default class DcBaseComponent {
     /**

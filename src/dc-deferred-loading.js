@@ -6,11 +6,15 @@ import dcFactory from './dc-factory';
  *
  * @param {function} importFunction
  * @param {string} nameSpace
- * @return {typeof Initializable} wrapper for component class
+ * @return {typeof Component} wrapper for component class
  */
 export default function dcDeferredLoading(importFunction, nameSpace) {
-
-    return class DeferredWrapper {
+    /**
+     * A wrapper class for deferred loading
+     * @class
+     * @implements {Component}
+     */
+    class DeferredWrapper {
         constructor(element) {
             this.element = element;
         }
@@ -40,5 +44,7 @@ export default function dcDeferredLoading(importFunction, nameSpace) {
         static getNamespace() {
             return nameSpace;
         }
-    };
+    }
+
+    return DeferredWrapper;
 }
