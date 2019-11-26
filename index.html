@@ -198,6 +198,33 @@
             </script>
 
         </div>
+
+        <div class="mb-5">
+            <h2>Deferred Loading</h2>
+            <p>
+                You can defer your components loading by changing the way of registering components. This technique uses Webpack dynamic import under the hood. So Webpack creates a separate chunk for the component on the build step.
+            </p>
+            <script data-live-highlight="deferred-1">
+                const importFunction = () => import(/* webpackChunkName: "some-component" */ './some-component');
+                dcFactory.register(dcDeferredLoading(importFunction, 'some-component'));
+
+                
+            </script>
+            <div data-live-highlight-target="deferred-1"></div>
+            <p>
+               The second argument in <i>dcDeferredLoading</i> should be the component's namespace.
+            </p>
+            <script data-live-highlight="deferred-2">
+                class SomeComponent extends DcBaseComponent {
+                    static getNamespace() {
+                        return 'some-component'
+                    }
+                }
+            </script>
+            <div data-live-highlight-target="deferred-2"></div>
+            <p>The deferred loading is more powerfull with lazy initialization. In this case, the component's chunk will be loaded after dcFactory tries to initialize it.</p>
+        </div>
+
     </div>
 </div>
 </body>
