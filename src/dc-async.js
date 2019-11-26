@@ -1,6 +1,3 @@
-import DcBaseComponent from './dc-base-component';
-import dcFactory from './dc-factory';
-
 /**
  * This function returns wrapper componentClass
  *
@@ -8,13 +5,13 @@ import dcFactory from './dc-factory';
  * @param {string} nameSpace
  * @return {typeof Component} wrapper for component class
  */
-export default function dcDeferredLoading(importFunction, nameSpace) {
+export default function dcAsync(importFunction, nameSpace) {
     /**
-     * A wrapper class for deferred loading
+     * A wrapper class for async loading
      * @class
      * @implements {Component}
      */
-    class DeferredWrapper {
+    class AsyncWrapper {
         constructor(element) {
             this.element = element;
         }
@@ -46,5 +43,5 @@ export default function dcDeferredLoading(importFunction, nameSpace) {
         }
     }
 
-    return DeferredWrapper;
+    return AsyncWrapper;
 }

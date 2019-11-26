@@ -200,31 +200,30 @@
         </div>
 
         <div class="mb-5">
-            <h2>Deferred Loading</h2>
+            <h2>Async Loading</h2>
             <p>
                 You can defer your components loading by changing the way of registering components. This technique uses Webpack dynamic import under the hood. So Webpack creates a separate chunk for the component on the build step.
             </p>
-            <script data-live-highlight="deferred-1">
-                const importFunction = () => import(/* webpackChunkName: "some-component" */ './some-component');
-                dcFactory.register(dcDeferredLoading(importFunction, 'some-component'));
-
-                
-            </script>
-            <div data-live-highlight-target="deferred-1"></div>
             <p>
-               The second argument in <i>dcDeferredLoading</i> should be the component's namespace.
+                The second argument in <i>dcAsync</i> should be the component's namespace.
             </p>
-            <script data-live-highlight="deferred-2">
-                class SomeComponent extends DcBaseComponent {
-                    static getNamespace() {
-                        return 'some-component'
-                    }
-                }
-            </script>
-            <div data-live-highlight-target="deferred-2"></div>
-            <p>The deferred loading is more powerfull with lazy initialization. In this case, the component's chunk will be loaded after dcFactory tries to initialize it.</p>
-        </div>
+            <p>The async loading is more powerfull with lazy initialization. In this case, the component's chunk will be loaded after dcFactory tries to initialize it.</p>
+            <div id="async-example" data-dc-lazy data-dc-test-async-component></div>
+            <button id="async-trigger-button"
+                    class="btn btn-primary mt-2 mb-2">Init lazy component combined with async
+            </button>
+            <script>
+                dcFactory.register(dcAsync(() => import('./demo/test-async-component.js'), 'test-async-component'));
 
+                const asyncTriggerButton = document.getElementById('async-trigger-button');
+                asyncTriggerButton.addEventListener('click', () => {
+                    dcFactory.init(document.getElementById('async-example'), true);
+                })
+            </script>
+            <p>
+                In Network tab you can see that the whole code of the component is downloaded separately and can be easily moved to a separate async chunk
+            </p>
+        </div>
     </div>
 </div>
 </body>
