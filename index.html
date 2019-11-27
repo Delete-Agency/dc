@@ -202,12 +202,17 @@
         <div class="mb-5">
             <h2>Async Loading</h2>
             <p>
-                You can defer your components loading by changing the way of registering components. This technique uses Webpack dynamic import under the hood. So Webpack creates a separate chunk for the component on the build step.
+                You can defer your components loading by changing the way of registering components.
+                This technique compliments Webpack dynamic imports: webpack creates a separate chunk for the component on the build step.
             </p>
             <p>
                 The second argument in <i>dcAsync</i> should be the component's namespace.
+                This value will also replace components <i>getNamespace</i> static method so you don't have to declare component namespace twice.
             </p>
-            <p>The async loading is more powerfull with lazy initialization. In this case, the component's chunk will be loaded after dcFactory tries to initialize it.</p>
+            <p>
+                The async loading is more powerful with lazy initialization.
+                In this case, the component's chunk will be loaded only after dcFactory tries to initialize it.
+            </p>
             <div id="async-example" data-dc-lazy data-dc-test-async-component></div>
             <button id="async-trigger-button"
                     class="btn btn-primary mt-2 mb-2">Init lazy component combined with async
@@ -221,7 +226,7 @@
                 })
             </script>
             <p>
-                In Network tab you can see that the whole code of the component is downloaded separately and can be easily moved to a separate async chunk
+                In Network tab you can see that the whole code of the component is downloaded separately
             </p>
         </div>
     </div>

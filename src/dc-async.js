@@ -23,6 +23,9 @@ export default function dcAsync(importFunction, nameSpace) {
         init() {
             importFunction()
                 .then(({ default: componentClass }) => {
+                    componentClass.getNamespace = function () {
+                        return nameSpace;
+                    };
                     this.actualInstance = new componentClass(this.element);
                     this.actualInstance.init();
                 })
