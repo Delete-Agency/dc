@@ -15,7 +15,7 @@ function getNamespacedAnchorAttribute(namespace) {
 }
 
 /**
- * @param {HTMLElement} root
+ * @param {HTMLElement} root!
  * @param {string} namespace
  * @param {?string|Function} selector
  * @return {Array}
