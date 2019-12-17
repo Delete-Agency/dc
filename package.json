@@ -16,7 +16,7 @@
     "standalone": "webpack --config webpack.standalone.config.js",
     "demo": "webpack --config webpack.demo.config.js",
     "demo:watch": "webpack --config webpack.demo.config.js --watch",
-    "test": "echo \"No test specified\"",
+    "test": "jest --coverage",
     "prepublish": "npm run standalone"
   },
   "author": "",
@@ -27,6 +27,7 @@
     "babel-loader": "^8.0.6",
     "clean-webpack-plugin": "^3.0.0",
     "core-js": "^2.0.0",
+    "jest": "^24.9.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.6"
   }
