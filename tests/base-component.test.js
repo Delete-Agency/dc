@@ -42,6 +42,25 @@ it('component instance has refs in object', () => {
     expect(instance.refs.btn.foo).toEqual(btn);
 });
 
+it('constructor throws out error when required ref is missing', () => {
+
+    class Cmp extends DcBaseComponent {
+        static getNamespace() {
+            return 'some-namespace'
+        }
+        static getRequiredRefs() {
+            return ['btn'];
+        }
+    }
+
+    const element = document.createElement('div');
+    const createInstance = () => {
+        const instance = new Cmp(element);
+    };
+
+    expect(createInstance).toThrow(Error);
+});
+
 it('component instance has options', () => {
     const element = document.createElement('div');
     element.setAttribute('data-dc-some-namespace', '{"foo": "bar"}');
