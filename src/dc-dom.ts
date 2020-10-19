@@ -1,0 +1,130 @@
+import { getCamelCaseString, addToAssociativeCollection } from './utils';
+
+const DC_NAMESPACE = 'data-dc';
+const DC_NAMESPACED_ATTRIBUTE_REFERENCE = 'ref';
+const DC_NAMESPACED_ATTRIBUTE_LAZY = 'lazy';
+
+const matches = (root: HTMLElement, selector: string): boolean => {
+    // add support of the matches in IE
+    // @ts-ignore
+    return root.matches ? root.matches(selector) : root.msMatchesSelector(selector);
+};
+
+/**
+ *
+ * @param {HTMLElement} element
+ * @param {string} selector
+ * @return {HTMLElement[]}
+ */
+
+const scopedQuerySelectorAll = (element: HTMLElement, selector: string): HTMLElement[] => {
+    return Array.prototype.slice.call(element.querySelectorAll(selector));
+};
+
+/**
+ * @param {HTMLElement} root!
+ * @param {string} namespace
+ * @param {?string|Function} selector
+ * @return {Array}
+ * @throws Error
+ */
+const findElementsForInit = (
+    root: HTMLElement | null,
+    namespace: string,
+    selector?: string | Function
+) => {
+    // by default we use namespace
+    if (selector === null) {
+        selector = `[${getNamespacedAnchorAttribute(namespace)}]`;
+    }
+
+    let elements = [];
+    if (typeof selector === 'string') {
+        elements = scopedQuerySelectorAll(root, selector);
+        if (matches(root, selector)) {
+            elements.push(root);
+        }
+    } else if (typeof selector === 'function') {
+        elements = selector(root);
+    } else {
+        throw new Error("Unknown selector's type");
+    }
+
+    return elements;
+};
+
+/**
+ * @param {HTMLElement} element
+ * @return {boolean}
+ */
+const isElementWithinLazyParent = (element: HTMLElement): boolean => {
+    let checkElement = element;
+    const attribute = `[${DC_NAMESPACE}-${DC_NAMESPACED_ATTRIBUTE_LAZY}]`;
+    while (checkElement) {
+        if (checkElement.hasAttribute(attribute)) {
+            return true;
+        }
+        checkElement = checkElement.parentElement;
+    }
+
+    return false;
+};
+
+/**
+ * @param {HTMLElement} element
+ * @param {string} namespace
+ * @return {ReferencesCollection}
+ */
+const getElementRefs = (element: HTMLElement, namespace: string): object => {
+    const refAttribute = `${DC_NAMESPACE}-${namespace}-${DC_NAMESPACED_ATTRIBUTE_REFERENCE}`;
+    const refSelector = `[${refAttribute}]`;
+    const componentSelector = `[${getNamespacedAnchorAttribute(namespace)}]`;
+    const nestedComponents = scopedQuerySelectorAll(element, componentSelector);
+
+    const refs = {};
+    scopedQuerySelectorAll(element, refSelector)
+        ?.filter((ref) => !nestedComponents.some((nested) => nested.contains(ref)))
+        ?.forEach((ref) => {
+            const refValue = ref.getAttribute(refAttribute);
+            if (refValue !== null) {
+                addToAssociativeCollection(refs, getCamelCaseString(refValue), ref);
+            }
+        });
+
+    return refs;
+};
+
+/**
+ * @param {HTMLElement} element
+ * @param {string} namespace
+ * @return {?Object}
+ */
+
+const getElementOptions = (element: HTMLElement, namespace: string) => {
+    const attribute = getNamespacedAnchorAttribute(namespace);
+    let result = {};
+    const attributeValue = element.getAttribute(attribute);
+    if (attributeValue) {
+        try {
+            result = JSON.parse(attributeValue);
+        } catch (error) {
+            console.error(`Unable to parse «${attribute}» attribute on element:`, element);
+            throw error;
+        }
+    }
+
+    return result;
+};
+
+const getNamespacedAnchorAttribute = (namespace: string): string => {
+    return `${DC_NAMESPACE}-${namespace}`;
+};
+
+export {
+    scopedQuerySelectorAll,
+    getElementRefs,
+    findElementsForInit,
+    isElementWithinLazyParent,
+    matches,
+    getElementOptions,
+};

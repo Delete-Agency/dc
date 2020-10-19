@@ -8,7 +8,8 @@
  * @param value
  */
 // todo remove similar method from object helper with the same name
-function addToAssociativeCollection(collection, name, value) {
+
+const addToAssociativeCollection = (collection: object, name: string, value: HTMLElement): void => {
     const arrayRegexp = /(.+)\[(.*)\]/;
     const arrayParseResult = name.match(arrayRegexp);
     if (arrayParseResult !== null) {
@@ -33,11 +34,11 @@ function addToAssociativeCollection(collection, name, value) {
  * @param {string} str
  * @return {string}
  */
-function getCamelCaseString(str) {
+const getCamelCaseString = (str: string): string  => {
     return str.replace(/-./g, word => word.charAt(1).toUpperCase());
 }
 
-function checkForbiddenOverrides(superClass, instance, properties) {
+const checkForbiddenOverrides = (superClass, instance, properties: string[]) => {
     let prototype = instance;
 
     while (prototype.constructor !== superClass) {
@@ -51,8 +52,8 @@ function checkForbiddenOverrides(superClass, instance, properties) {
     }
 }
 
-export default {
-    addToAssociativeCollection,
+export {
     getCamelCaseString,
+    addToAssociativeCollection,
     checkForbiddenOverrides
-};
+}
