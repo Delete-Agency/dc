@@ -1,8 +1,7 @@
 import {
     getElementOptions,
-    getElementRefs,
+    getElementRefs, ReferencesCollection,
 } from './dc-dom';
-import { checkForbiddenOverrides } from './utils';
 
 /**
  * @typedef {Object.<string, {(HTMLElement|HTMLElement[]|Object.<string, HTMLElement>)}>} ReferencesCollection
@@ -39,7 +38,7 @@ import { checkForbiddenOverrides } from './utils';
 interface DcListener {
     elem: HTMLElement;
     eventName: string;
-    eventCallback: Function | EventListener;
+    eventCallback: CallableFunction;
 }
 
 /**
@@ -50,32 +49,21 @@ interface DcListener {
 
 
 class DcBaseComponent {
-    public element: HTMLElement;
-    private _listenersList: DcListener[];
-    protected options: object;
-    protected refs: object;
+    public readonly element: HTMLElement;
+    private _listenersList: DcListener[] = [];
+    protected readonly options: object;
+    protected readonly refs: ReferencesCollection;
     public static namespace: string = '';
     public static requiredRefs: string[] = [];
 
     public constructor(element: HTMLElement, namespace: string, requiredRefs: string[]) {
-        checkForbiddenOverrides(DcBaseComponent, this, [
-            'init',
-            'addListener',
-            'destroy'
-        ]);
-
+        Object.freeze(this.addListener);
+        Object.freeze(this.destroy);
         /**
          * Root element of the component
          * @type {HTMLElement}
          */
         this.element = element;
-
-        /**
-         * Stores DOM events listeners which is created via {@link DcBaseComponent#addListener}
-         * @type {Array}
-         * @private
-         */
-        this._listenersList = [];
 
         /**
          * Store an object with any data/settings which is provided by backend side
@@ -91,32 +79,22 @@ class DcBaseComponent {
             namespace,
         );
 
-        this._checkRequiredRefs(requiredRefs);
+        this._checkRequiredRefs(requiredRefs, namespace);
     }
 
-    /**
-     * Check that all the required references exist in the DOM
-     * @param {ReferencesCollection} refs
-     * @private
-     */
-    _checkRequiredRefs = (refs: string[]): void => {
+    private _checkRequiredRefs = (refs: string[], namespace: string): void => {
         refs.forEach(name => {
-            if (!refs[name]) {
+            if (!this.refs[name]) {
                 throw new Error(
-                    `the value of required ref ${name} is ${refs[name]}`
+                    `required ref "${name}" is not founded in ${namespace}`
                 );
             }
         });
     }
 
-    public init() {
-        this.onInit();
-    }
+    public init() {}
 
-    protected onInit() {}
-
-    protected addListener = (elem: HTMLElement, eventName: string, eventCallback: Function | EventListener): void => {
-        if (!elem || typeof elem.addEventListener !== 'function') return;
+    protected readonly addListener = (elem: HTMLElement, eventName: string, eventCallback: CallableFunction): void => {
         elem.addEventListener(eventName, eventCallback as EventListener);
         this._listenersList.push({
             elem,
@@ -134,7 +112,7 @@ class DcBaseComponent {
         this._listenersList = [];
     }
 
-    public destroy = (): void => {
+    public readonly destroy = (): void => {
         this._removeAllListeners();
         this.onDestroy();
     }

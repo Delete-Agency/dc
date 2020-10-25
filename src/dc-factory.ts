@@ -1,5 +1,5 @@
 import { findElementsForInit, isElementWithinLazyParent } from './dc-dom';
-import { DcBaseComponent } from './dc-base-component'
+import { DcBaseComponent } from 'src/dc-base-component'
 
 /**
  * @typedef {string} ComponentState
@@ -28,13 +28,13 @@ const STATE_ERROR = 'error';
 
 interface StatedComponent {
     element: HTMLElement;
-    instance: DcBaseComponent | null;
+    instance: DcBaseComponent | undefined
     state: string
 }
 
 interface RegisteredComponent {
     _Class: typeof DcBaseComponent;
-    selector: string | Function;
+    selector: string | Function | undefined;
     components: StatedComponent[]
 }
 
@@ -46,7 +46,8 @@ class DcFactory {
      * @param {typeof DcBaseComponent} ComponentClass
      * @param {Function|string} selector that indicates how we should search that component elements
      */
-    public register(ComponentClass: typeof DcBaseComponent, selector?: string | Function): void {
+    public register(ComponentClass: typeof DcBaseComponent, selector?: string | Function | undefined): void {
+        console.log(selector);
         this._registeredComponents.push({
             _Class: ComponentClass,
             selector,
@@ -60,8 +61,8 @@ class DcFactory {
      * @param {boolean} withLazy - Whether or not initialize component which marked as lazy
      */
     public init: (root?: HTMLElement, withLazy?: boolean) => void = (root = document.body, withLazy = true) => {
-        this._registeredComponents.forEach((registeredComponent) => {
-            this._initComponent(root, registeredComponent, withLazy);
+        this._registeredComponents.forEach((rComponent) => {
+            this._initComponent(root, rComponent, withLazy);
         });
     }
 
@@ -73,7 +74,7 @@ class DcFactory {
         this._registeredComponents.forEach((rComponent) => {
             rComponent.components = rComponent.components.filter(({ element, instance, state }) => {
                 if (root.contains(element)) {
-                    if (state === STATE_CREATED) instance.destroy();
+                    if (state === STATE_CREATED && instance) instance.destroy();
                     return false;
                 }
 
@@ -83,30 +84,30 @@ class DcFactory {
     }
 
 
-    private _getComponent = (_element: HTMLElement, registeredComponent: RegisteredComponent): StatedComponent =>
-        registeredComponent.components.find(({ element }) => element === _element);
+    private _getComponent = (_element: HTMLElement, rComponent: RegisteredComponent): StatedComponent | undefined =>
+        rComponent.components.find(({ element }) => element === _element);
 
-    private _getState = (element: HTMLElement, registeredComponent: RegisteredComponent): string => {
-        const component = this._getComponent(element, registeredComponent);
+    private _getState = (element: HTMLElement, rComponent: RegisteredComponent): string => {
+        const component = this._getComponent(element, rComponent);
         if (component) return component.state;
         return STATE_NOT_INITED;
     }
 
-    private _setState = (element: HTMLElement, registeredComponent: RegisteredComponent, state: string, instance?: DcBaseComponent): void => {
-        let component = this._getComponent(element, registeredComponent);
+    private _setState = (element: HTMLElement, rComponent: RegisteredComponent, state: string, instance?: DcBaseComponent | undefined): void => {
+        let component = this._getComponent(element, rComponent);
 
         if (!component) {
             component = { element, state, instance }
-            registeredComponent.components.push(component);
+            rComponent.components.push(component);
         }
         Object.assign(component, { state, instance })
     }
 
-    private _initComponent = (root: HTMLElement, registeredComponent: RegisteredComponent, withLazy?: boolean): void => {
+    private _initComponent = (root: HTMLElement, rComponent: RegisteredComponent, withLazy?: boolean): void => {
         try {
-            const { _Class: { namespace }, selector } = registeredComponent;
+            const { _Class: { namespace }, selector } = rComponent;
             findElementsForInit(root, namespace, selector).forEach((element) => {
-                this._initComponentOnElement(element, registeredComponent, withLazy);
+                this._initComponentOnElement(element, rComponent, withLazy);
             });
         } catch (e) {
             // ignore current config error and move to the next one
@@ -114,9 +115,9 @@ class DcFactory {
         }
     }
 
-    private _initComponentOnElement = (element: HTMLElement, registeredComponent: RegisteredComponent, withLazy?: boolean): void => {
-        const { _Class } = registeredComponent;
-        const state = this._getState(element, registeredComponent);
+    private _initComponentOnElement = (element: HTMLElement, rComponent: RegisteredComponent, withLazy?: boolean): void => {
+        const { _Class } = rComponent;
+        const state = this._getState(element, rComponent);
         switch (state) {
             // ignore components which are already created or in the middle of that process
             case STATE_CREATED:
@@ -132,17 +133,17 @@ class DcFactory {
         // if component is lazy but we should not instantiate it according withLazy = false
         // we need to mark this component and wait until withLazy = true
         if (!withLazy && isElementWithinLazyParent(element)) {
-            this._setState(element, registeredComponent, STATE_LAZY_WAITING);
+            this._setState(element, rComponent, STATE_LAZY_WAITING);
             return;
         }
 
         // finally init component on element
-        this._setState(element, registeredComponent, STATE_INITIALIZING);
+        this._setState(element, rComponent, STATE_INITIALIZING);
         requestAnimationFrame(() => {
             try {
-                this._createComponent(element, registeredComponent);
+                this._createComponent(element, rComponent);
             } catch (error) {
-                this._setState(element, registeredComponent, STATE_ERROR);
+                this._setState(element, rComponent, STATE_ERROR);
                 console.error(`Component ${_Class.name} hasn't been created due to error: ${error.message}`, element);
                 console.error(error);
             }
@@ -150,11 +151,12 @@ class DcFactory {
     }
 
 
-    private _createComponent = (element: HTMLElement, registeredComponent: RegisteredComponent): void => {
-        const { _Class } = registeredComponent;
+    private _createComponent = (element: HTMLElement, rComponent: RegisteredComponent): void => {
+        const { _Class } = rComponent;
         const instance = new _Class(element, _Class.namespace, _Class.requiredRefs);
+        console.log(instance);
         instance.init();
-        this._setState(element, registeredComponent, STATE_CREATED, instance);
+        this._setState(element, rComponent, STATE_CREATED, instance);
     }
 }
 

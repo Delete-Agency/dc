@@ -78,38 +78,39 @@
             <div data-live-highlight-target="simple"></div>
 
             <div class="example mb-5">
-                <div class="collapsed" id="simple-collapsed" data-live-highlight="simple"
-                        data-dc-collapsed='{"speed": 500, "ease": "linear"}'>
-                    <button class="collapsed__button" data-dc-collapsed-ref="button">
+                <div class="collapsed" data-live-highlight="simple" data-dc-collapsed='{"speed": 500, "ease": "linear"}'>
+                    <button class="collapsed__button btn btn-primary mt-2 mb-2" data-dc-collapsed-ref="button">
                         Toggle
                     </button>
                     <div class="collapse card card-body" data-dc-collapsed-ref="content">
                         Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.
+
+                        <div class="collapsed" data-dc-collapsed='{"speed": 500, "ease": "linear"}'>
+                            <button class="collapsed__button btn btn-primary mt-2 mb-2" data-dc-collapsed-ref="button">
+                                Nested Toggle
+                            </button>
+                            <div class="collapse card card-body" data-dc-collapsed-ref="content">
+                                Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <script data-live-highlight="simple">
                 class CollapsedComponent extends DcBaseComponent {
-                    constructor(...args) {
-                        super(...args);
+                    static namespace = 'collapsed';
+                    static requiredRefs = ['button', 'content'];
 
-                        this.onClick = this.onClick.bind(this);
-                    }
-
-                    static getNamespace() {
-                        return 'collapsed'
-                    }
-
-                    onInit() {
+                    init = () => {
                         console.log('CollapsedComponent was instantiate on the element', this.element);
                         console.log('Options', this.options);
                         console.log('Refs', this.refs);
 
-                        this.refs.button.addEventListener('click', this.onClick);
+                        this.addListener(this.refs.button, 'click', this.onClick);
                     }
 
-                    onClick() {
+                    onClick = () => {
                         if (this.refs.content.classList.contains('show')) {
                             this.refs.content.classList.remove('show');
                         } else {
@@ -176,11 +177,9 @@
 
             <script data-live-highlight="lazy">
                 class MessageComponent extends DcBaseComponent {
-                    static getNamespace() {
-                        return 'message'
-                    }
+                    static namespace = 'message';
 
-                    onInit() {
+                    init() {
                         console.log('MessageComponent is created on node', this.element);
                         this.element.innerText = this.options.message;
                     }
@@ -207,7 +206,7 @@
             </p>
             <p>
                 The second argument in <i>dcAsync</i> should be the component's namespace.
-                This value will also replace components <i>getNamespace</i> static method so you don't have to declare component namespace twice.
+                This value will also replace components <i>namespace</i> static method so you don't have to declare component namespace twice.
             </p>
             <p>
                 The async loading is more powerful with lazy initialization.
@@ -218,7 +217,7 @@
                     class="btn btn-primary mt-2 mb-2">Init lazy component combined with async
             </button>
             <script>
-                dcFactory.register(dcAsync(() => import('./demo/test-async-component.js'), 'test-async-component'));
+                dcFactory.register(dcAsync(() => import('./demo/test-async-component.js')), '[data-dc-test-async-component]');
 
                 const asyncTriggerButton = document.getElementById('async-trigger-button');
                 asyncTriggerButton.addEventListener('click', () => {

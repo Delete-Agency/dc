@@ -14,19 +14,19 @@ export const dcAsync = (importFunction: CallableFunction): any => {
      */
     class AsyncWrapper {
         public element: HTMLElement;
-        public instance: DcBaseComponent;
+        public instance: DcBaseComponent | undefined;
 
         constructor(element: HTMLElement) {
             this.element = element;
         }
 
-        init() {
+        public init() {
             importFunction()
                 .then(( _Class: typeof DcBaseComponent ) => {
                     this.instance = new _Class(this.element, _Class.namespace, _Class.requiredRefs);
                     this.instance.init();
                 })
-                .catch(error => {
+                .catch((error: any) => {
                     console.error(
                         `An error occurred while loading the component ${importFunction}`
                     );
@@ -34,8 +34,8 @@ export const dcAsync = (importFunction: CallableFunction): any => {
                 });
         }
 
-        destroy() {
-            this.instance.destroy();
+        public destroy() {
+            if (this.instance) this.instance.destroy();
         }
     }
 

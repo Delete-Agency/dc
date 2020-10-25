@@ -1,4 +1,4 @@
-import { getCamelCaseString, addToAssociativeCollection } from './utils';
+import { getCamelCaseString } from './utils';
 
 const DC_NAMESPACE = 'data-dc';
 const DC_NAMESPACED_ATTRIBUTE_REFERENCE = 'ref';
@@ -29,12 +29,12 @@ const scopedQuerySelectorAll = (element: HTMLElement, selector: string): HTMLEle
  * @throws Error
  */
 const findElementsForInit = (
-    root: HTMLElement | null,
+    root: HTMLElement,
     namespace: string,
     selector?: string | Function
-) => {
+): HTMLElement[] => {
     // by default we use namespace
-    if (selector === null) {
+    if (!selector) {
         selector = `[${getNamespacedAnchorAttribute(namespace)}]`;
     }
 
@@ -58,7 +58,7 @@ const findElementsForInit = (
  * @return {boolean}
  */
 const isElementWithinLazyParent = (element: HTMLElement): boolean => {
-    let checkElement = element;
+    let checkElement: HTMLElement | null = element;
     const attribute = `[${DC_NAMESPACE}-${DC_NAMESPACED_ATTRIBUTE_LAZY}]`;
     while (checkElement) {
         if (checkElement.hasAttribute(attribute)) {
@@ -75,19 +75,43 @@ const isElementWithinLazyParent = (element: HTMLElement): boolean => {
  * @param {string} namespace
  * @return {ReferencesCollection}
  */
-const getElementRefs = (element: HTMLElement, namespace: string): object => {
+
+interface ReferencesCollection {
+    [key: string]: HTMLElement | HTMLElement[] | {
+        [_key: string]: HTMLElement
+    };
+}
+
+const getElementRefs = (element: HTMLElement, namespace: string): ReferencesCollection => {
     const refAttribute = `${DC_NAMESPACE}-${namespace}-${DC_NAMESPACED_ATTRIBUTE_REFERENCE}`;
     const refSelector = `[${refAttribute}]`;
     const componentSelector = `[${getNamespacedAnchorAttribute(namespace)}]`;
     const nestedComponents = scopedQuerySelectorAll(element, componentSelector);
 
-    const refs = {};
+    const refs: ReferencesCollection = {};
     scopedQuerySelectorAll(element, refSelector)
         ?.filter((ref) => !nestedComponents.some((nested) => nested.contains(ref)))
         ?.forEach((ref) => {
-            const refValue = ref.getAttribute(refAttribute);
+            let refValue = ref.getAttribute(refAttribute);
             if (refValue !== null) {
-                addToAssociativeCollection(refs, getCamelCaseString(refValue), ref);
+                let _refValue = getCamelCaseString(refValue);
+                const arrayRegexp = /(.+)\[(.*)\]/;
+                const arrayParseResult = _refValue.match(arrayRegexp);
+                if (arrayParseResult !== null) {
+                    _refValue = arrayParseResult[1];
+                    const key = arrayParseResult[2];
+                    const isObject = (key !== '') && (!/^\d+$/.test(key));
+                    if (!(_refValue in refs)) {
+                        refs[_refValue] = isObject ? {} : [];
+                    }
+                    if (isObject) {
+                        refs[_refValue] = Object.assign(refs[_refValue], { [key]: ref })
+                    } else {
+                        (refs[_refValue] as HTMLElement[]).push(ref);
+                    }
+                } else {
+                    refs[_refValue] = ref;
+                }
             }
         });
 
@@ -121,6 +145,7 @@ const getNamespacedAnchorAttribute = (namespace: string): string => {
 };
 
 export {
+    ReferencesCollection,
     scopedQuerySelectorAll,
     getElementRefs,
     findElementsForInit,

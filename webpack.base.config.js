@@ -1,33 +1,58 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require('path');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = (env, argv) => {
     return {
-        mode: "production",
+        mode: 'production',
         entry: {
-            "dc": ["./src/index.js"]
+            'dc': './src/index.ts'
         },
         output: {
-            filename: "[name].min.js",
+            filename: '[name].min.js',
             libraryTarget: 'umd'
         },
         resolve: {
-            extensions: ['.js'],
-            modules: ['node_modules']
+            extensions: ['.ts'],
+            modules: ['node_modules', path.resolve(__dirname, './src'), path.resolve(__dirname, './'), path.resolve(__dirname, './node_modules')]
         },
-        devtool: "source-map",
+        devtool: 'source-map',
         module: {
             rules: [
                 {
-                    test: /\.(js|jsx)$/,
+                    test: /\.(jsx?)$/,
                     exclude: /node_modules/,
                     use: {
-                        loader: "babel-loader",
+                        loader: 'babel-loader'
                     }
+                },
+                {
+                    test: /\.(tsx?)$/,
+                    loaders: [
+                        {
+                            loader: 'babel-loader'
+                        },
+                        {
+                            loader: 'thread-loader',
+                            options: {
+                                // there should be 1 cpu for the fork-ts-checker-webpack-plugin
+                                workers: require('os').cpus().length - 1
+                            }
+                        },
+                        {
+                            loader: 'ts-loader',
+                            options: {
+                                happyPackMode: true // for thread-loader
+                            }
+                        }
+                    ]
                 }
+
             ]
         },
         plugins: [
-            new CleanWebpackPlugin(),
-        ],
-    }
+            new ForkTsCheckerWebpackPlugin(),
+            new CleanWebpackPlugin()
+        ]
+    };
 };
