@@ -50,7 +50,7 @@ dcFactory.register(CollapsedComponent);
 
 
 // later after registering all your components, when your page is ready
-dcFactory.init();
+dcFactory.init(document.body);
 
 ```
 
@@ -72,13 +72,13 @@ Type: `string | CallableFunction: HTMLElement[]`
 
 CSS selector which will override searching by getNamespace() and be used for searching elements of given componentClass. 
 
-### dcFactory.init(root = document.body, withLazy = true)
+### dcFactory.init(root, withLazy = true)
 
 Starts the factory on a given root: finds and creates all registered components within the root
 
 #### root
 
-*Optional*<br>
+*Required*<br>
 Type: `HTMLElement`
 
 #### withLazy

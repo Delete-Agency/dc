@@ -122,12 +122,12 @@
 
             <p>
                 Call dcFactory.register with your components, and then starts the factory by calling
-                dcFactory.init()
+                dcFactory.init(document.body)
             </p>
 
             <script data-live-highlight>
                 dcFactory.register(CollapsedComponent);
-                dcFactory.init();
+                dcFactory.init(document.body);
             </script>
         </div>
 

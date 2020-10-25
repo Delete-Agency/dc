@@ -60,7 +60,7 @@ class DcFactory {
      * @param {HTMLElement} root
      * @param {boolean} withLazy - Whether or not initialize component which marked as lazy
      */
-    public init: (root?: HTMLElement, withLazy?: boolean) => void = (root = document.body, withLazy = true) => {
+    public init: (root?: HTMLElement, withLazy?: boolean) => void = (root = document.documentElement, withLazy = true) => {
         this._registeredComponents.forEach((rComponent) => {
             this._initComponent(root, rComponent, withLazy);
         });
