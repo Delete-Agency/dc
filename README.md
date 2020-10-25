@@ -78,7 +78,7 @@ Starts the factory on a given root: finds and creates all registered components 
 
 #### root
 
-*Required*<br>
+*Optional*<br>
 Type: `HTMLElement`
 
 #### withLazy
