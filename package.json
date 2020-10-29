@@ -12,8 +12,11 @@
   },
   "homepage": "https://github.com/Delete-Agency/dc",
   "scripts": {
+    "standalone": "webpack --config webpack.standalone.config.js",
     "demo": "webpack --config webpack.demo.config.js",
-    "demo:watch": "webpack --config webpack.demo.config.js --watch"
+    "demo:watch": "webpack --config webpack.demo.config.js --watch",
+    "test": "echo \"No test specified\"",
+    "prepublish": "npm run standalone"
   },
   "author": "",
   "license": "MIT",
