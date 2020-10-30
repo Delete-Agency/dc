@@ -1,5 +1,5 @@
 /**
- * Return sting in camelCase notation, e.g. some-name becomes someName
+ * Return string in camelCase notation, e.g. some-name becomes someName
  * @param {string} str
  * @return {string}
  */

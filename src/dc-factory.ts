@@ -58,7 +58,7 @@ class DcFactory {
     /**
      * Starts the factory on a given root: finds and creates all registered components within the root
      * @param {HTMLElement} root
-     * @param {boolean} withLazy - Whether or not initialize component which marked as lazy
+     * @param {boolean} withLazy - Whether or not initialize component which is marked as lazy
      */
     public init: (root?: HTMLElement, withLazy?: boolean) => void = (root = document.documentElement, withLazy = true) => {
         this._registeredComponents.forEach((rComponent) => {
@@ -130,7 +130,7 @@ class DcFactory {
                 }
         }
 
-        // if component is lazy but we should not instantiate it according withLazy = false
+        // if component is lazy but we should not instantiate it according to withLazy = false
         // we need to mark this component and wait until withLazy = true
         if (!withLazy && isElementWithinLazyParent(element)) {
             this._setState(element, rComponent, STATE_LAZY_WAITING);

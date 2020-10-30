@@ -86,7 +86,7 @@ class DcBaseComponent {
         refs.forEach(name => {
             if (!this.refs[name]) {
                 throw new Error(
-                    `required ref "${name}" is not founded in ${namespace}`
+                    `required ref "${name}" not found in ${namespace}`
                 );
             }
         });

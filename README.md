@@ -25,7 +25,7 @@ class CollapsedComponent extends DcBaseComponent {
 	static requiredRefs = ['button', 'content'];
 
 	init = () => {
-		console.log('CollapsedComponent was instantiate on the element', this.element);
+		console.log('CollapsedComponent was instantiated on the element', this.element);
 		console.log('Options', this.options);
 		console.log('Refs', this.refs);
 
