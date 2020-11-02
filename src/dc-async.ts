@@ -1,4 +1,4 @@
-import { DcBaseComponent } from "./dc-base-component";
+import { DcBaseComponent } from './dc-base-component';
 
 /**
  * This function returns wrapper componentClass

@@ -4,10 +4,11 @@ const DC_NAMESPACE = 'data-dc';
 const DC_NAMESPACED_ATTRIBUTE_REFERENCE = 'ref';
 const DC_NAMESPACED_ATTRIBUTE_LAZY = 'lazy';
 
+interface ieHTMLElement extends HTMLElement { msMatchesSelector(selectors: string): boolean; }
+
 const matches = (root: HTMLElement, selector: string): boolean => {
     // add support of the matches in IE
-    // @ts-ignore
-    return root.matches ? root.matches(selector) : root.msMatchesSelector(selector);
+    return root.matches ? root.matches(selector) : (root as ieHTMLElement).msMatchesSelector(selector) ;
 };
 
 /**
