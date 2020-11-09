@@ -31,19 +31,6 @@ module.exports = (env, argv) => {
                     loaders: [
                         {
                             loader: 'babel-loader'
-                        },
-                        {
-                            loader: 'thread-loader',
-                            options: {
-                                // there should be 1 cpu for the fork-ts-checker-webpack-plugin
-                                workers: require('os').cpus().length - 1
-                            }
-                        },
-                        {
-                            loader: 'ts-loader',
-                            options: {
-                                happyPackMode: true // for thread-loader
-                            }
                         }
                     ]
                 }
