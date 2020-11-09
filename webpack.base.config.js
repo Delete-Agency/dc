@@ -9,7 +9,7 @@ module.exports = (env, argv) => {
             'dc': './src/index.ts'
         },
         output: {
-            filename: '[name].min.js',
+            filename: './[name].min.js',
             libraryTarget: 'umd'
         },
         resolve: {
@@ -28,7 +28,7 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.(tsx?)$/,
-                    loaders: [
+                    use: [
                         {
                             loader: 'babel-loader'
                         }

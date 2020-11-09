@@ -22,9 +22,12 @@ export const dcAsync = (importFunction: CallableFunction): any => {
 
         public init() {
             importFunction()
-                .then(( _Class: typeof DcBaseComponent ) => {
-                    this.instance = new _Class(this.element, _Class.namespace, _Class.requiredRefs);
-                    this.instance.init();
+                .then(( module: any ) => {
+                    Object.keys(module).forEach((key) => {
+                        const _Class = module[key] as typeof DcBaseComponent;
+                        this.instance = new _Class(this.element, _Class.namespace, _Class.requiredRefs);
+                        this.instance.init();
+                    })
                 })
                 .catch((error: any) => {
                     console.error(
