@@ -1,30 +1,6 @@
 import { findElementsForInit, isElementWithinLazyParent } from './dc-dom';
 import { DcBaseComponent } from 'src/dc-base-component'
-
-/**
- * @typedef {string} ComponentState
- * */
-
-/**
- * @type {ComponentState}
- */
-const STATE_NOT_INITED = 'not-inited';
-/**
- * @type {ComponentState}
- */
-const STATE_INITIALIZING = 'initializing';
-/**
- * @type {ComponentState}
- */
-const STATE_LAZY_WAITING = 'lazy-waiting';
-/**
- * @type {ComponentState}
- */
-const STATE_CREATED = 'created';
-/**
- * @type {ComponentState}
- */
-const STATE_ERROR = 'error';
+import { states } from "./enums";
 
 interface StatedComponent {
     element: HTMLElement;
@@ -74,7 +50,7 @@ class DcFactory {
         this._registeredComponents.forEach((rComponent) => {
             rComponent.components = rComponent.components.filter(({ element, instance, state }) => {
                 if (root.contains(element)) {
-                    if (state === STATE_CREATED && instance) instance.destroy();
+                    if (state === states.CREATED && instance) instance.destroy();
                     return false;
                 }
 
@@ -90,7 +66,7 @@ class DcFactory {
     private _getState = (element: HTMLElement, rComponent: RegisteredComponent): string => {
         const component = this._getComponent(element, rComponent);
         if (component) return component.state;
-        return STATE_NOT_INITED;
+        return states.NOT_INITED;
     }
 
     private _setState = (element: HTMLElement, rComponent: RegisteredComponent, state: string, instance?: DcBaseComponent | undefined): void => {
@@ -120,11 +96,11 @@ class DcFactory {
         const state = this._getState(element, rComponent);
         switch (state) {
             // ignore components which are already created or in the middle of that process
-            case STATE_CREATED:
-            case STATE_ERROR:
-            case STATE_INITIALIZING:
+            case states.CREATED:
+            case states.ERROR:
+            case states.INITIALIZING:
                 return;
-            case STATE_LAZY_WAITING:
+            case states.LAZY_WAITING:
                 if (!withLazy) {
                     return;
                 }
@@ -133,17 +109,17 @@ class DcFactory {
         // if component is lazy but we should not instantiate it according to withLazy = false
         // we need to mark this component and wait until withLazy = true
         if (!withLazy && isElementWithinLazyParent(element)) {
-            this._setState(element, rComponent, STATE_LAZY_WAITING);
+            this._setState(element, rComponent, states.LAZY_WAITING);
             return;
         }
 
         // finally init component on element
-        this._setState(element, rComponent, STATE_INITIALIZING);
+        this._setState(element, rComponent, states.INITIALIZING);
         requestAnimationFrame(() => {
             try {
                 this._createComponent(element, rComponent);
             } catch (error) {
-                this._setState(element, rComponent, STATE_ERROR);
+                this._setState(element, rComponent, states.ERROR);
                 console.error(`Component ${_Class.name} hasn't been created due to error: ${error.message}`, element);
                 console.error(error);
             }
@@ -154,9 +130,8 @@ class DcFactory {
     private _createComponent = (element: HTMLElement, rComponent: RegisteredComponent): void => {
         const { _Class } = rComponent;
         const instance = new _Class(element, _Class.namespace, _Class.requiredRefs);
-        console.log(instance);
         instance.init();
-        this._setState(element, rComponent, STATE_CREATED, instance);
+        this._setState(element, rComponent, states.CREATED, instance);
     }
 }
 
