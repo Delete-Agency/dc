@@ -23,7 +23,6 @@ class DcFactory {
      * @param {Function|string} selector that indicates how we should search that component elements
      */
     public register(ComponentClass: typeof DcBaseComponent, selector?: string | Function | undefined): void {
-        console.log(selector);
         this._registeredComponents.push({
             _Class: ComponentClass,
             selector,
