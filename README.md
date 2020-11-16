@@ -18,28 +18,33 @@ $ npm install @deleteagency/dc
 
 ```js
 // collapsed/collapsed.js
-import {DcComponent} from  '@deleteagency/dc';
+import { DcComponent } from  '@deleteagency/dc';
 
-export default class CollapsedComponent extends DcBaseComponent {
-    constructor(...args) {
-        super(...args);
+class CollapsedComponent extends DcBaseComponent {
+	static namespace = 'collapsed';
+	static requiredRefs = ['button', 'content'];
 
-        this.button = this.refs.button;
-        this.content = this.refs.content;
-    }
+	init = () => {
+		console.log('CollapsedComponent was instantiated on the element', this.element);
+		console.log('Options', this.options);
+		console.log('Refs', this.refs);
 
-    onInit() {
-        console.log('CollapsedComponent was instantiate on the element', this.element)
-    }
+		this.addListener(this.refs.button, 'click', this.onClick);
+	}
 
-    static getNamespace() {
-        return 'collapsed'
-    }
+	onClick = () => {
+		if (this.refs.content.classList.contains('show')) {
+			this.refs.content.classList.remove('show');
+		} else {
+			this.refs.content.classList.add('show');
+		}
+	}
 }
 
 // collapsed/index.js
 import './scss/index.scss';
-import {dcFactory} from  '@deleteagency/dc';
+
+import { dcFactory } from  '@deleteagency/dc';
 import CollapsedComponent from './collapsed.js';
 dcFactory.register(CollapsedComponent);
 
@@ -63,7 +68,7 @@ Class which inherits DcBaseComponent and will be instantiated
 #### selector
 
 *Optional*<br>
-Type: `string`
+Type: `string | CallableFunction: HTMLElement[]`
 
 CSS selector which will override searching by getNamespace() and be used for searching elements of given componentClass. 
 
@@ -73,7 +78,7 @@ Starts the factory on a given root: finds and creates all registered components 
 
 #### root
 
-*Required*<br>
+*Optional*<br>
 Type: `HTMLElement`
 
 #### withLazy
@@ -91,50 +96,6 @@ Destroy all previously registered components within the passed element
 #### root
 
 *Required*<br>
-Type: `HTMLElement`
-
-### dcFactory.getChildComponents(element, componentClass)
-
-Returns `DcBaseComponent[]`
-
-Returns all components of componentClass which are contained within the passed element
-
-#### element
-
-*Required*<br>
-Type: `HTMLElement`
-
-#### componentClass
-
-*Required*<br>
-Type: `typeof DcBaseComponent`
-
-### dcFactory.getChildComponent(element, componentClass)
-
-Returns `DcBaseComponent`
-
-Returns first found component of componentClass which is contained within the passed element
-
-#### element
-
-*Required*<br>
-Type: `HTMLElement`
-
-#### componentClass
-
-*Required*<br>
-Type: `typeof DcBaseComponent`
-
-### dcFactory.debug(element)
-
-Returns `DcBaseComponent[]`
-
-NOTE: just for debugging purpose!
-Returns all components instances which were created on the given element.
-
-#### element
-
-*Optional*<br>
 Type: `HTMLElement`
 
 
