@@ -74,22 +74,22 @@ const isElementWithinLazyParent = (element: HTMLElement): boolean => {
 /**
  * @param {HTMLElement} element
  * @param {string} namespace
- * @return {ReferencesCollection}
+ * @return {IDCRefsCollection}
  */
 
-interface ReferencesCollection {
+interface IDCRefsCollection {
     [key: string]: HTMLElement | HTMLElement[] | {
         [_key: string]: HTMLElement
     };
 }
 
-const getElementRefs = (element: HTMLElement, namespace: string): ReferencesCollection => {
+const getElementRefs = <T extends (IDCRefsCollection | void)>(element: HTMLElement, namespace: string): T => {
     const refAttribute = `${DC_NAMESPACE}-${namespace}-${DC_NAMESPACED_ATTRIBUTE_REFERENCE}`;
     const refSelector = `[${refAttribute}]`;
     const componentSelector = `[${getNamespacedAnchorAttribute(namespace)}]`;
     const nestedComponents = scopedQuerySelectorAll(element, componentSelector);
 
-    const refs: ReferencesCollection = {};
+    const refs: IDCRefsCollection = {};
     scopedQuerySelectorAll(element, refSelector)
         ?.filter((ref) => !nestedComponents.some((nested) => nested.contains(ref)))
         ?.forEach((ref) => {
@@ -116,7 +116,7 @@ const getElementRefs = (element: HTMLElement, namespace: string): ReferencesColl
             }
         });
 
-    return refs;
+    return refs as T;
 };
 
 /**
@@ -125,7 +125,7 @@ const getElementRefs = (element: HTMLElement, namespace: string): ReferencesColl
  * @return {?Object}
  */
 
-const getElementOptions = (element: HTMLElement, namespace: string) => {
+const getElementOptions = <T>(element: HTMLElement, namespace: string): T => {
     const attribute = getNamespacedAnchorAttribute(namespace);
     let result = {};
     const attributeValue = element.getAttribute(attribute);
@@ -138,7 +138,7 @@ const getElementOptions = (element: HTMLElement, namespace: string) => {
         }
     }
 
-    return result;
+    return result as T;
 };
 
 const getNamespacedAnchorAttribute = (namespace: string): string => {
@@ -146,11 +146,11 @@ const getNamespacedAnchorAttribute = (namespace: string): string => {
 };
 
 export {
-    ReferencesCollection,
     scopedQuerySelectorAll,
     getElementRefs,
     findElementsForInit,
     isElementWithinLazyParent,
     matches,
     getElementOptions,
+    IDCRefsCollection,
 };
