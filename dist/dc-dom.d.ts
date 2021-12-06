@@ -22,19 +22,19 @@ declare const isElementWithinLazyParent: (element: HTMLElement) => boolean;
 /**
  * @param {HTMLElement} element
  * @param {string} namespace
- * @return {ReferencesCollection}
+ * @return {IDCRefsCollection}
  */
-interface ReferencesCollection {
+interface IDCRefsCollection {
     [key: string]: HTMLElement | HTMLElement[] | {
         [_key: string]: HTMLElement;
     };
 }
-declare const getElementRefs: (element: HTMLElement, namespace: string) => ReferencesCollection;
+declare const getElementRefs: <T extends void | IDCRefsCollection>(element: HTMLElement, namespace: string) => T;
 /**
  * @param {HTMLElement} element
  * @param {string} namespace
  * @return {?Object}
  */
-declare const getElementOptions: (element: HTMLElement, namespace: string) => {};
-export { ReferencesCollection, scopedQuerySelectorAll, getElementRefs, findElementsForInit, isElementWithinLazyParent, matches, getElementOptions, };
+declare const getElementOptions: <T>(element: HTMLElement, namespace: string) => T;
+export { scopedQuerySelectorAll, getElementRefs, findElementsForInit, isElementWithinLazyParent, matches, getElementOptions, IDCRefsCollection, };
 //# sourceMappingURL=dc-dom.d.ts.map

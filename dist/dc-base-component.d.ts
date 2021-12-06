@@ -1,17 +1,20 @@
-import { ReferencesCollection } from './dc-dom';
+import { IDCRefsCollection } from './dc-dom';
 /**
  * Base component.
  * @class
  * @implements {DcBaseComponent}
  */
-declare class DcBaseComponent {
-    readonly element: HTMLElement;
+declare type IDCOptions = {
+    [key in string | number]: any;
+};
+declare class DcBaseComponent<Root extends HTMLElement = HTMLElement, Options extends (IDCOptions | void) = void, Refs extends (IDCRefsCollection | void) = void> {
+    readonly element: Root;
     private _listenersList;
-    protected readonly options: object;
-    protected readonly refs: ReferencesCollection;
+    protected readonly options: Options;
+    protected readonly refs: Refs;
     static namespace: string;
     static requiredRefs: string[];
-    constructor(element: HTMLElement, namespace: string, requiredRefs: string[]);
+    constructor(element: Root, namespace: string, requiredRefs: string[]);
     private _checkRequiredRefs;
     init(): void;
     protected readonly addListener: (elem: HTMLElement, eventName: string, eventCallback: CallableFunction) => void;
