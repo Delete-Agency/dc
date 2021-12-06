@@ -1,5 +1,5 @@
 import { findElementsForInit, isElementWithinLazyParent } from './dc-dom';
-import { DcBaseComponent } from 'src/dc-base-component'
+import { DcBaseComponent } from './dc-base-component'
 import { states } from "./enums";
 
 interface StatedComponent {
