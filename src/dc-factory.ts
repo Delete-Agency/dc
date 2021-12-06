@@ -1,5 +1,5 @@
 import { findElementsForInit, isElementWithinLazyParent } from './dc-dom';
-import { DcBaseComponent } from 'src/dc-base-component'
+import { DcBaseComponent } from './dc-base-component'
 import { states } from "./enums";
 
 interface StatedComponent {
@@ -117,7 +117,7 @@ class DcFactory {
         requestAnimationFrame(() => {
             try {
                 this._createComponent(element, rComponent);
-            } catch (error) {
+            } catch (error: any) {
                 this._setState(element, rComponent, states.ERROR);
                 console.error(`Component ${_Class.name} hasn't been created due to error: ${error.message}`, element);
                 console.error(error);
