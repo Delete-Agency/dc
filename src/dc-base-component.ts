@@ -1,10 +1,10 @@
 import {
     getElementOptions,
-    getElementRefs, ReferencesCollection,
+    getElementRefs, IDCRefsCollection,
 } from './dc-dom';
 
 /**
- * @typedef {Object.<string, {(HTMLElement|HTMLElement[]|Object.<string, HTMLElement>)}>} ReferencesCollection
+ * @typedef {Object.<string, {(HTMLElement|HTMLElement[]|Object.<string, HTMLElement>)}>} IDCRefsCollection
  */
 
 /**
@@ -47,16 +47,19 @@ interface DcListener {
  * @implements {DcBaseComponent}
  */
 
+type IDCOptions = {
+    [key in string | number]: any;
+};
 
-class DcBaseComponent {
-    public readonly element: HTMLElement;
+class DcBaseComponent<Root extends HTMLElement = HTMLElement, Options extends (IDCOptions | void) = void, Refs extends (IDCRefsCollection | void) = void> {
+    public readonly element: Root;
     private _listenersList: DcListener[] = [];
-    protected readonly options: object;
-    protected readonly refs: ReferencesCollection;
+    protected readonly options: Options;
+    protected readonly refs: Refs;
     public static namespace: string = '';
     public static requiredRefs: string[] = [];
 
-    public constructor(element: HTMLElement, namespace: string, requiredRefs: string[]) {
+    public constructor(element: Root, namespace: string, requiredRefs: string[]) {
         Object.freeze(this.addListener);
         Object.freeze(this.destroy);
         /**
@@ -69,12 +72,12 @@ class DcBaseComponent {
          * Store an object with any data/settings which is provided by backend side
          * @type {Object}
          */
-        this.options = getElementOptions(element, namespace);
+        this.options = getElementOptions<Options>(element, namespace);
 
         /**
-         * @type {ReferencesCollection}
+         * @type {IDCRefsCollection}
          */
-        this.refs = getElementRefs(
+        this.refs = getElementRefs<Refs>(
             element,
             namespace,
         );
@@ -84,7 +87,7 @@ class DcBaseComponent {
 
     private _checkRequiredRefs = (refs: string[], namespace: string): void => {
         refs.forEach(name => {
-            if (!this.refs[name]) {
+            if (!(this.refs as IDCRefsCollection)[name]) {
                 throw new Error(
                     `required ref "${name}" not found in ${namespace}`
                 );
