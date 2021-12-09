@@ -1,4 +1,4 @@
-import { DcBaseComponent } from 'src/dc-base-component';
+import { DcBaseComponent } from './dc-base-component';
 declare class DcFactory {
     private _registeredComponents;
     /**
